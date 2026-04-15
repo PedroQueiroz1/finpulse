@@ -1,0 +1,26 @@
+package com.finpulse.auth.dto;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+/*
+Anotação de estudo:
+Os "record" eles carregam praticamente os mesmos dados que o User.java por exemplo, que é uma entidade.
+O que isso quer dizer? Quer dizer que o "record" gera automaticamente o construtor e os getters.
+A diferença e muito importante é que os campos são sempre "final", ou seja, são atributos de um objeto imutável.
+Campos final só podem ser definidos no momento da criação...
+*/
+public record RegisterRequest(
+        @NotBlank(message = "Nome é obrigatório")
+        @Size(min = 2, max = 150, message = "Nome deve ter entre 2 e 150 caracteres")
+        String name,
+
+        @NotBlank(message = "E-mail é obrigatório")
+        @Email(message = "E-mail deve ser válido")
+        String email,
+
+        @NotBlank(message = "Senha é obrigatória")
+        @Size(min = 8, max = 100, message = "Senha deve ter entre 8 e 100 caracteres")
+        String password
+) {}
