@@ -1,0 +1,14 @@
+# Configurações globais compartilhadas entre todos os microsserviços
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.finpulse: DEBUG
+    org.springframework: INFO
