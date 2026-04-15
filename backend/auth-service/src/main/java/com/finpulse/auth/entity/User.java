@@ -17,6 +17,20 @@ import java.util.UUID;
 
 /*
 Aqui eu poderia usar LOMBOK mas optei por não utilizar para ser mais efetivo os estudos.
+
+@Entity e @Table — dizem ao JPA que essa classe mapeia a tabela users
+@Id + @GeneratedValue(strategy = UUID) — chave primária com UUID auto-gerado
+@Enumerated(EnumType.STRING) — salva o nome do enum no banco ("USER", "ADMIN"), não o número ordinal
+@PrePersist e @PreUpdate — callbacks do JPA que preenchem as datas automaticamente
+
+UUID como chave primária — mais seguro que auto-increment (não expõe quantidade de registros)
+gen_random_uuid() — PostgreSQL gera o UUID automaticamente
+email UNIQUE — impede cadastro duplicado a nível de banco
+Índices em email e role — otimiza buscas frequentes
+COMMENT ON — documenta o schema (boa prática)
+
+Metodo criado por: Pedro Queiroz
+Projeto de estudos
 */
 @Entity
 @Table(name = "users")
