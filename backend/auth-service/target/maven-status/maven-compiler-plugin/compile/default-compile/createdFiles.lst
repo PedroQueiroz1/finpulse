@@ -1,0 +1,8 @@
+com\finpulse\auth\enums\Role.class
+com\finpulse\auth\dto\RegisterRequest.class
+com\finpulse\auth\entity\User.class
+com\finpulse\auth\dto\LoginRequest.class
+com\finpulse\auth\dto\UserResponse.class
+com\finpulse\auth\dto\AuthResponse.class
+com\finpulse\auth\AuthServiceApplication.class
+com\finpulse\auth\repository\UserRepository.class

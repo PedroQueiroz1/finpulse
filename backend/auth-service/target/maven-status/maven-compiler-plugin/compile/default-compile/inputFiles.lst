@@ -1,0 +1,8 @@
+C:\finpulse\backend\auth-service\src\main\java\com\finpulse\auth\AuthServiceApplication.java
+C:\finpulse\backend\auth-service\src\main\java\com\finpulse\auth\dto\AuthResponse.java
+C:\finpulse\backend\auth-service\src\main\java\com\finpulse\auth\dto\LoginRequest.java
+C:\finpulse\backend\auth-service\src\main\java\com\finpulse\auth\dto\RegisterRequest.java
+C:\finpulse\backend\auth-service\src\main\java\com\finpulse\auth\dto\UserResponse.java
+C:\finpulse\backend\auth-service\src\main\java\com\finpulse\auth\entity\User.java
+C:\finpulse\backend\auth-service\src\main\java\com\finpulse\auth\enums\Role.java
+C:\finpulse\backend\auth-service\src\main\java\com\finpulse\auth\repository\UserRepository.java
