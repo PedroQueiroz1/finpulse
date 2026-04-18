@@ -142,4 +142,11 @@ public class AuthService {
                 userResponse
         );
     }
+    
+    @Transactional(readOnly = true)
+    public UserResponse getUserByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException(email));
+        return userMapper.toResponse(user);
+    }
 }
