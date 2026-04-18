@@ -1,0 +1,15 @@
+com\finpulse\stock\dto\CompanyInfoResponse.class
+com\finpulse\stock\provider\StockProviderFacade.class
+com\finpulse\stock\exception\ProviderNotAvailableException.class
+com\finpulse\stock\exception\GlobalExceptionHandler.class
+com\finpulse\stock\StockServiceApplication.class
+com\finpulse\stock\exception\StockNotFoundException.class
+com\finpulse\stock\service\StockService.class
+com\finpulse\stock\dto\ErrorResponse.class
+com\finpulse\stock\exception\ExternalApiException.class
+com\finpulse\stock\dto\StockQuoteResponse.class
+com\finpulse\stock\controller\StockController.class
+com\finpulse\stock\config\RedisCacheConfig.class
+com\finpulse\stock\provider\FinnhubProvider.class
+com\finpulse\stock\provider\StockProvider.class
+com\finpulse\stock\provider\AlphaVantageProvider.class

@@ -1,0 +1,45 @@
+spring:
+  application:
+    name: stock-service
+  config:
+    import: optional:configserver:http://localhost:8888
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 2000ms
+  cache:
+    type: redis
+    redis:
+      time-to-live: 300000   # 5 minutos default
+      cache-null-values: false
+
+server:
+  port: 8083
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, caches
+
+# Configurações das APIs externas — vamos sobrescrever com .env/variáveis
+stock:
+  cache:
+    quote-ttl-seconds: 60          # Cotação dura 1 min no cache
+    company-ttl-seconds: 86400     # Dados da empresa duram 24h
+  providers:
+    alpha-vantage:
+      base-url: https://www.alphavantage.co
+      api-key: ${ALPHA_VANTAGE_API_KEY:demo}
+    finnhub:
+      base-url: https://finnhub.io/api/v1
+      api-key: ${FINNHUB_API_KEY:demo}
+  default-provider: alpha-vantage   # Strategy default

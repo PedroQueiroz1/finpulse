@@ -31,7 +31,7 @@
         <module>auth-service</module>
         <!-- <module>api-gateway</module> -->
         <module>notes-service</module>
-        <!-- <module>stock-service</module> -->
+        <module>stock-service</module>
         <!-- <module>news-service</module> -->
         <!-- <module>finance-service</module> -->
         <!-- <module>youtube-service</module> -->
