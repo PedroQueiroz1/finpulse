@@ -29,6 +29,8 @@ O servidor gera o token no login e o cliente envia em cada requisição no heade
 O servidor valida a assinatura sem precisar consultar o banco.
 Design Pattern aqui — Strategy: O @Value permite trocar o secret e tempos de expiração via configuração sem alterar código. Isso é o princípio O do SOLID (Open/Closed) — aberto para extensão, fechado para modificação.
 
+ATENÇÃO: extractClaim foi alterado de private para public para o JwtAuthenticationFilter poder acessar.
+
 Metodo criado por Pedro Queiroz
 Projeto de estudos
 */
@@ -97,7 +99,8 @@ public class JwtService {
         return extractClaim(token, Claims::getExpiration).before(new Date());
     }
 
-    private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+    // Private --> Public por causa do JwtAuthenticationFilter!
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         Claims claims = Jwts.parser()
                 .verifyWith(getSigningKey())
                 .build()

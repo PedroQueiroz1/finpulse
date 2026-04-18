@@ -4,53 +4,64 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 
 /*
-csrf.disable() — CSRF protection é para aplicações com formulários HTML. APIs REST usam tokens (JWT) para autenticação, então CSRF não se aplica
-SessionCreationPolicy.STATELESS — o servidor não cria sessão HTTP. Cada requisição é independente e carrega seu próprio JWT. Isso é o que torna a API RESTful de verdade
-BCryptPasswordEncoder — algoritmo de hash adaptativo para senhas. Cada hash é diferente mesmo para a mesma senha (usa salt interno)
-Os endpoints de auth são permitAll() porque o usuário precisa acessá-los antes de ter um token
+Foi criado o JwtAuthenticationFilter.java
+Por conta disso tivemos que alterar o SecurityConfig mas eu quis manter a versão antiga para estudar ela também.
 
-Metodo criado por Pedro Queiroz
-PROJETO de Estudos
+A linha chave é .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+- insere nosso filtro JWT antes do filtro padrão do Spring Security na cadeia de filtros. 
+Isso é o Design Pattern Chain of Responsibility.
+
+O @EnableMethodSecurity permite usar @PreAuthorize("hasRole('ADMIN')") em métodos específicos
+
+Metodo Criado Por Pedro Queiroz
+Projeto De Estudos
 */
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
+
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            // Desabilita CSRF — em APIs REST stateless não usamos CSRF
             .csrf(csrf -> csrf.disable())
-
-            // Define quais endpoints são públicos e quais exigem autenticação
             .authorizeHttpRequests(auth -> auth
-                // Endpoints públicos (sem token)
                 .requestMatchers(
                     "/api/auth/register",
                     "/api/auth/login",
                     "/api/auth/refresh",
+                    "/api/auth/health",
                     "/actuator/health",
                     "/actuator/info",
                     "/v3/api-docs/**",
                     "/swagger-ui/**",
                     "/swagger-ui.html"
                 ).permitAll()
-                // Qualquer outra requisição precisa de autenticação
                 .anyRequest().authenticated()
             )
-
-            // Stateless — o servidor não guarda sessão, cada request carrega o JWT
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            );
+            )
+            // Registra o JWT filter ANTES do filtro padrão de autenticação
+            .addFilterBefore(jwtAuthenticationFilter,
+                    UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
