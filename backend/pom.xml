@@ -29,9 +29,8 @@
         <module>config-server</module>
         <module>eureka-server</module>
         <module>auth-service</module>
-        <!-- Módulos futuros serão adicionados aqui -->
         <!-- <module>api-gateway</module> -->
-        <!-- <module>notes-service</module> -->
+        <module>notes-service</module>
         <!-- <module>stock-service</module> -->
         <!-- <module>news-service</module> -->
         <!-- <module>finance-service</module> -->
