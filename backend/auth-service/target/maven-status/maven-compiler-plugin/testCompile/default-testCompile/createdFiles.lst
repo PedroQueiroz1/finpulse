@@ -1,5 +1,0 @@
-com\finpulse\auth\service\AuthServiceTest.class
-com\finpulse\auth\service\JwtServiceTest.class
-com\finpulse\auth\service\AuthServiceTest$RegisterTests.class
-com\finpulse\auth\service\AuthServiceTest$GetUserByEmailTests.class
-com\finpulse\auth\service\AuthServiceTest$LoginTests.class
