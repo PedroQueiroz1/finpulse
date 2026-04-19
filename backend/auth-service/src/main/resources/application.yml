@@ -28,13 +28,16 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
   instance:
     prefer-ip-address: true
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health, info, metrics
 jwt:
   secret: finpulse-secret-key-que-deve-ter-pelo-menos-256-bits-de-comprimento-para-seguranca
   access-token-expiration: 900000
   refresh-token-expiration: 604800000
+# ================================
+# Informações da aplicação (/actuator/info)
+# ================================
+info:
+  app:
+    name: ${spring.application.name}
+    description: Serviço de autenticação JWT do FinPulse
+    version: 0.0.1-SNAPSHOT
+    java-version: 17

@@ -28,6 +28,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 /*
 Novo AuthController pós Swagger na aplicação
+@RestController — combina @Controller + @ResponseBody (retorna JSON automaticamente)
+@RequestMapping("/api/auth") — prefixo de URL para todos os endpoints desta classe
+@Valid — ativa a validação das anotações do Record (@NotBlank, @Email, etc.)
+@RequestBody — deserializa o JSON do body para o Record Java
+ResponseEntity — permite controlar o status HTTP da resposta (201 CREATED, 200 OK, etc.)
+
+Isso é o Spring MVC em ação: o request chega no Controller → passa pro Service → o Service usa o Repository → volta a resposta pelo Controller como JSON.
+
+Metodo cRiado por Pedro Queiroz
+Projeto de Estudos!
 */
 @RestController
 @RequestMapping("/api/auth")

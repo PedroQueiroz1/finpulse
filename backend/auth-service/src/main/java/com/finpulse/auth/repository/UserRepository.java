@@ -28,27 +28,27 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     long countByRole(Role role);
 
-    // Bug hunt começa aqui 👇
-
     @Query("SELECT u FROM User u WHERE u.role = :role AND u.active = true")
-    List<User> findActiveUsersByRole(@Param("userRole") Role role);
+    List<User> findActiveUsersByRole(@Param("role") Role role);
 
     @Query("SELECT u FROM User u WHERE u.createdAt >= :startDate ORDER BY u.createdAt DESC")
     List<User> findUsersCreatedAfter(@Param("startDate") LocalDateTime startDate);
 
-    @Query("SELECT u FROM users u WHERE LOWER(u.name) LIKE LOWER(CONCAT('%', :name, '%'))")
+    @Query("SELECT u FROM User u WHERE LOWER(u.name) LIKE LOWER(CONCAT('%', :name, '%'))")
     List<User> searchByName(@Param("name") String name);
 
     @Query("SELECT COUNT(u) FROM User u WHERE u.role = :role AND u.active = true")
     long countActiveByRole(@Param("role") Role role);
 
+    @Modifying
     @Query("UPDATE User u SET u.active = false, u.updatedAt = CURRENT_TIMESTAMP WHERE u.id = :id")
     int deactivateUser(@Param("id") UUID id);
 
     @Query(
         value = "SELECT u.role, COUNT(*) as total, " +
                 "SUM(CASE WHEN u.active THEN 1 ELSE 0 END) as active_count " +
-                "FROM users u GROUP BY u.role"
+                "FROM users u GROUP BY u.role",
+        nativeQuery = true
     )
     List<Object[]> getUserStatsByRole();
 }

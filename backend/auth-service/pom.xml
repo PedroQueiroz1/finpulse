@@ -95,10 +95,24 @@
             <version>${mapstruct.version}</version>
         </dependency>
 
-        <!-- Actuator (health checks) -->
+        <!-- Spring Boot Actuator: expõe endpoints de monitoramento -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <!-- Micrometer Prometheus: expõe métricas no formato Prometheus -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- Prometheus Exposition Formats: necessário no Spring Boot 3.4+ pra gerar o texto -->
+        <dependency>
+            <groupId>io.prometheus</groupId>
+            <artifactId>prometheus-metrics-exposition-formats</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- Eureka Client (service discovery) -->

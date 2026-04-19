@@ -1,14 +1,40 @@
-# Configurações globais compartilhadas entre todos os microsserviços
+# ================================
+# Actuator - Monitoramento
+# ================================
 management:
   endpoints:
     web:
       exposure:
-        include: health, info, metrics
+        include:
+          - health
+          - info
+          - metrics
+          - prometheus
+          - env
+          - loggers
+      base-path: /actuator
   endpoint:
     health:
-      show-details: always
+      show-details: when-authorized
+      probes:
+        enabled: true
+  info:
+    env:
+      enabled: true
+    git:
+      mode: full
+  metrics:
+    distribution:
+      percentiles-histogram:
+        "[http.server.requests]": true
+      percentiles:
+        "[http.server.requests]": 0.5, 0.95, 0.99
+    tags:
+      application: ${spring.application.name}
 
-logging:
-  level:
-    com.finpulse: DEBUG
-    org.springframework: INFO
+info:
+  app:
+    name: ${spring.application.name}
+    description: Serviço de autenticação JWT do FinPulse
+    version: 0.0.1-SNAPSHOT
+    java-version: 17
