@@ -1,6 +1,7 @@
 package com.finpulse.auth.exception;
 
 import com.finpulse.auth.dto.ErrorResponse;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,9 +19,9 @@ import java.util.Map;
 Design Patterns aplicados:
 
 Template Method — BusinessException é a classe base, as filhas (EmailAlreadyExistsException, etc.) personalizam mensagem e status
-Chain of Responsibility — o @RestControllerAdvice funciona como uma cadeia: tenta o handler mais específico primeiro (BusinessException), depois o de validação, e por último o genérico
+Chain of Responsibility — o @RestControllerAdvice funciona como uma cadeia: tenta o handler mais específico primeiro (BusinessException), depois JWT, depois validação, e por último o genérico
 
-A anotação @RestControllerAdvice intercepta todas as exceções de todos os controllers automaticamente. Sem ela, cada controller teria que tratar seus próprios erros.
+A anotação @RestControllerAdvice intercepta todas as exceções de todos os controllers automaticamente.
 
 Metodo criado por: Pedro Queiroz
 Projeto de estudos
@@ -45,6 +46,23 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity.status(ex.getStatus()).body(error);
+    }
+
+    // Trata exceções JWT (token malformado, expirado, assinatura inválida, etc.)
+    @ExceptionHandler(JwtException.class)
+    public ResponseEntity<ErrorResponse> handleJwtException(
+            JwtException ex, HttpServletRequest request) {
+
+        log.warn("JWT exception: {} - Path: {}", ex.getMessage(), request.getRequestURI());
+
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.UNAUTHORIZED.value(),
+                "Unauthorized",
+                "Token inválido ou expirado",
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
 
     // Trata erros de validação (@Valid nos DTOs)
