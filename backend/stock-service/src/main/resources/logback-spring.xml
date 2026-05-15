@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <springProperty scope="context" name="appName" source="spring.application.name"/>
+
+    <!-- APPENDER DEV: console colorido -->
+    <appender name="CONSOLE_DEV" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>
+                %d{HH:mm:ss.SSS} %clr(%-5level) %clr([${appName:-app}]){cyan} %clr([%X{correlationId:-no-cid}]){magenta} %clr(%-40.40logger{39}){blue} : %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <!-- APPENDER PROD: JSON estruturado para Grafana/ELK -->
+    <appender name="CONSOLE_PROD" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>
+                {"timestamp":"%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}","level":"%level","app":"${appName:-app}","correlationId":"%X{correlationId:-}","logger":"%logger","thread":"%thread","message":"%msg"}%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <springProfile name="dev">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE_DEV"/>
+        </root>
+        <logger name="com.finpulse.stock" level="DEBUG"/>
+    </springProfile>
+
+    <springProfile name="prod">
+        <root level="WARN">
+            <appender-ref ref="CONSOLE_PROD"/>
+        </root>
+        <logger name="com.finpulse.stock" level="INFO"/>
+    </springProfile>
+
+    <springProfile name="test">
+        <root level="WARN">
+            <appender-ref ref="CONSOLE_DEV"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="!dev &amp; !prod &amp; !test">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE_DEV"/>
+        </root>
+    </springProfile>
+
+</configuration>

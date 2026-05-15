@@ -1,0 +1,64 @@
+spring:
+  application:
+    name: stock-service
+  config:
+    import: ""
+
+  data:
+    redis:
+      host: localhost           # overridden by @DynamicPropertySource
+      port: 6379
+      timeout: 2000ms
+  cache:
+    type: redis
+    redis:
+      time-to-live: 60000
+      cache-null-values: false
+
+  autoconfigure:
+    exclude:
+      - org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationAutoConfiguration
+
+eureka:
+  client:
+    enabled: false
+    register-with-eureka: false
+    fetch-registry: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+    prometheus:
+      access: unrestricted
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
+server:
+  port: 0
+
+stock:
+  providers:
+    alpha-vantage:
+      base-url: http://localhost:1   # overridden by @DynamicPropertySource
+      api-key: test-key
+    finnhub:
+      base-url: http://localhost:1   # overridden by @DynamicPropertySource
+      api-key: test-key
+  default-provider: alpha-vantage
+  cache:
+    quote-ttl-seconds: 60
+    company-ttl-seconds: 86400
+
+logging:
+  level:
+    root: WARN
+    com.finpulse.stock: INFO
