@@ -1,0 +1,47 @@
+# ================================
+# Perfil TEST - rodar testes isolados
+# Sem Config Server, sem Eureka, banco H2 em memória
+# ================================
+spring:
+  application:
+    name: auth-service-test
+  config:
+    import: ""                            # DESLIGA o Config Server
+  
+  # Banco H2 em memória (não precisa PostgreSQL rodando)
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+    username: sa
+    password: ""
+    driver-class-name: org.h2.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: create-drop               # cria schema e apaga no final
+    show-sql: false
+    database-platform: org.hibernate.dialect.H2Dialect
+  
+  flyway:
+    enabled: false                        # desliga Flyway (JPA cria tabelas)
+
+# Desliga Eureka em testes
+eureka:
+  client:
+    enabled: false
+    register-with-eureka: false
+    fetch-registry: false
+
+# JWT com secret fixo pros testes (não precisa rotacionar)
+jwt:
+  secret: test-secret-key-que-deve-ter-pelo-menos-256-bits-de-comprimento-para-seguranca
+  access-token-expiration: 900000
+  refresh-token-expiration: 604800000
+
+server:
+  port: 0                                 # porta aleatória (testes paralelos)
+
+# Logs minimais em testes
+logging:
+  level:
+    root: WARN
+    com.finpulse.auth: INFO

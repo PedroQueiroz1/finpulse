@@ -1,0 +1,45 @@
+spring:
+  application:
+    name: notes-service
+  config:
+    import: ""                          # desliga Config Server em testes
+
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/finpulse_notes_test  # sobrescrito pelo Testcontainers via @DynamicPropertySource
+      auto-index-creation: true
+
+  autoconfigure:
+    exclude:
+      - org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationAutoConfiguration
+
+eureka:
+  client:
+    enabled: false
+    register-with-eureka: false
+    fetch-registry: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+    prometheus:
+      access: unrestricted
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
+server:
+  port: 0                               # porta aleatória (testes paralelos)
+
+logging:
+  level:
+    root: WARN
+    com.finpulse.notes: INFO

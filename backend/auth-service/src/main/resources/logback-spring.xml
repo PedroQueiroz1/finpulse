@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- Inclui as configurações padrão do Spring Boot (cores, niveis, etc.) -->
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <!-- Variável: nome do serviço (vem do application.yml) -->
+    <springProperty scope="context" name="appName" source="spring.application.name"/>
+
+    <!-- ============================================
+         APPENDER 1: Console formatado para DEV
+         ============================================ -->
+    <appender name="CONSOLE_DEV" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>
+                %d{HH:mm:ss.SSS} %clr(%-5level) %clr([${appName:-app}]){cyan} %clr([%X{correlationId:-no-cid}]){magenta} %clr(%-40.40logger{39}){blue} : %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <!-- ============================================
+         APPENDER 2: JSON puro para PROD (Grafana/ELK)
+         ============================================ -->
+    <appender name="CONSOLE_PROD" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>
+                {"timestamp":"%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}","level":"%level","app":"${appName:-app}","correlationId":"%X{correlationId:-}","logger":"%logger","thread":"%thread","message":"%msg"}%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <!-- ============================================
+         PERFIL DEV: usa console colorido
+         ============================================ -->
+    <springProfile name="dev">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE_DEV"/>
+        </root>
+        <logger name="com.finpulse.auth" level="DEBUG"/>
+    </springProfile>
+
+    <!-- ============================================
+         PERFIL PROD: usa JSON
+         ============================================ -->
+    <springProfile name="prod">
+        <root level="WARN">
+            <appender-ref ref="CONSOLE_PROD"/>
+        </root>
+        <logger name="com.finpulse.auth" level="INFO"/>
+    </springProfile>
+
+    <!-- ============================================
+         PERFIL TEST: console simples, logs minimais
+         ============================================ -->
+    <springProfile name="test">
+        <root level="WARN">
+            <appender-ref ref="CONSOLE_DEV"/>
+        </root>
+    </springProfile>
+
+    <!-- ============================================
+         FALLBACK (nenhum perfil ativo)
+         ============================================ -->
+    <springProfile name="!dev &amp; !prod &amp; !test">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE_DEV"/>
+        </root>
+    </springProfile>
+
+</configuration>

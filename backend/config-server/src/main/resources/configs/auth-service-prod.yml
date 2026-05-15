@@ -1,0 +1,26 @@
+# ================================
+# auth-service - Perfil PROD
+# Valores REAIS vêm de variáveis de ambiente
+# ================================
+spring:
+  datasource:
+    url: ${DB_URL}                       # ex: jdbc:postgresql://prod-db:5432/finpulse
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+  jpa:
+    show-sql: false                      # nunca mostra SQL em prod (performance + log pollution)
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL:http://eureka-server:8761/eureka/}
+
+jwt:
+  secret: ${JWT_SECRET:#{null}}            # sem fallback: se não setar, aplicação não sobe
+  access-token-expiration: 900000
+  refresh-token-expiration: 604800000
+
+logging:
+  level:
+    root: WARN                           # só warnings e erros em prod
+    com.finpulse.auth: INFO              # seus logs de negócio
