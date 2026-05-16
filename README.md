@@ -1,4 +1,4 @@
-# FinPulse 📈
+# FinPulse (README DESATUALIZADO) 📈
 
 > Plataforma de mercado financeiro e produtividade pessoal construída com arquitetura de microsserviços.
 
