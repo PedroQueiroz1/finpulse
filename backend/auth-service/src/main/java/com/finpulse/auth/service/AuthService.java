@@ -1,5 +1,6 @@
 package com.finpulse.auth.service;
 
+import com.finpulse.auth.annotation.Audited;
 import com.finpulse.auth.dto.AuthResponse;
 import com.finpulse.auth.dto.LoginRequest;
 import com.finpulse.auth.dto.RegisterRequest;
@@ -56,6 +57,7 @@ public class AuthService {
         this.userMapper = userMapper;
     }
 
+    @Audited(action = "USER_REGISTER")
     @Transactional
     public AuthResponse register(RegisterRequest request) {
         log.info("Registrando novo usuário: {}", request.email());
@@ -79,6 +81,7 @@ public class AuthService {
         return generateAuthResponse(savedUser);
     }
 
+    @Audited(action = "USER_LOGIN")
     public AuthResponse login(LoginRequest request) {
         log.info("Tentativa de login: {}", request.email());
 

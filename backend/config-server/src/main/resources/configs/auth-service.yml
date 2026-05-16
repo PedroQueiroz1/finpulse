@@ -24,3 +24,8 @@ logging:
     com.finpulse.auth: DEBUG             # logs detalhados
     org.springframework.security: INFO
     org.hibernate.SQL: DEBUG
+
+aop:
+  logging-enabled: true
+  metrics-enabled: true
+  audit-enabled: true

@@ -114,3 +114,8 @@ info:
     description: Serviço de cotações de ações do FinPulse
     version: 0.0.1-SNAPSHOT
     java-version: 17
+
+aop:
+  logging-enabled: true
+  metrics-enabled: true
+  audit-enabled: false
