@@ -44,6 +44,8 @@ public class LoggingAspect {
         for (int i = 0; i < names.length; i++) {
             if (isSensitive(names[i])) {
                 result[i] = "***";
+            } else if (args[i] != null && containsSensitiveData(args[i].toString())) {
+                result[i] = args[i].getClass().getSimpleName() + "[***]";
             }
         }
         return result;
@@ -54,6 +56,15 @@ public class LoggingAspect {
         String lower = name.toLowerCase();
         for (String s : SENSITIVE_PARAMS) {
             if (lower.contains(s)) return true;
+        }
+        return false;
+    }
+
+    private boolean containsSensitiveData(String value) {
+        if (value == null) return false;
+        String lower = value.toLowerCase();
+        for (String s : SENSITIVE_PARAMS) {
+            if (lower.contains(s + "=") || lower.contains(s + ":")) return true;
         }
         return false;
     }
