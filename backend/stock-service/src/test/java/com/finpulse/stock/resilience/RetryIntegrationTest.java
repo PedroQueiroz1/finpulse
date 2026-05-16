@@ -83,4 +83,17 @@ class RetryIntegrationTest extends AbstractIntegrationTest {
 
         wireMock.verify(3, getRequestedFor(urlPathEqualTo("/query")));
     }
+
+    @Test
+    @DisplayName("não deve retentar após esgotar as 3 tentativas (lança exceção)")
+    void naoDeveRetentarApos3Tentativas() {
+        wireMock.stubFor(get(urlPathEqualTo("/query"))
+                .willReturn(aResponse().withStatus(503)));
+
+        assertThatThrownBy(() -> provider.getQuote("AAPL"))
+                .isInstanceOf(ExternalApiException.class);
+
+        // max-attempts=3: exatamente 3 chamadas, nenhuma a mais
+        wireMock.verify(3, getRequestedFor(urlPathEqualTo("/query")));
+    }
 }

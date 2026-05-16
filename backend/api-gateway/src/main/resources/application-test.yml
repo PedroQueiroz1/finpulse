@@ -36,6 +36,14 @@ spring:
         pool:
           type: DISABLED
 
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOriginPatterns: "http://allowed.test.com"
+            allowedMethods: [GET, POST, PUT, DELETE, OPTIONS]
+            allowedHeaders: "*"
+            exposedHeaders: [X-Correlation-ID]
+
 eureka:
   client:
     enabled: false
