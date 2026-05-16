@@ -58,6 +58,69 @@ stock:
     quote-ttl-seconds: 60
     company-ttl-seconds: 86400
 
+resilience4j:
+  circuitbreaker:
+    instances:
+      alpha-vantage:
+        sliding-window-type: COUNT_BASED
+        sliding-window-size: 4
+        minimum-number-of-calls: 3
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 1s
+        permitted-number-of-calls-in-half-open-state: 2
+        automatic-transition-from-open-to-half-open-enabled: true
+        register-health-indicator: true
+        ignore-exceptions:
+          - com.finpulse.stock.exception.StockNotFoundException
+      finnhub:
+        sliding-window-type: COUNT_BASED
+        sliding-window-size: 4
+        minimum-number-of-calls: 3
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 1s
+        permitted-number-of-calls-in-half-open-state: 2
+        automatic-transition-from-open-to-half-open-enabled: true
+        register-health-indicator: true
+        ignore-exceptions:
+          - com.finpulse.stock.exception.StockNotFoundException
+  retry:
+    instances:
+      alpha-vantage:
+        max-attempts: 3
+        wait-duration: 50ms
+        enable-exponential-backoff: true
+        exponential-backoff-multiplier: 2
+        retry-exceptions:
+          - com.finpulse.stock.exception.ExternalApiException
+        ignore-exceptions:
+          - com.finpulse.stock.exception.StockNotFoundException
+          - io.github.resilience4j.circuitbreaker.CallNotPermittedException
+      finnhub:
+        max-attempts: 3
+        wait-duration: 50ms
+        enable-exponential-backoff: true
+        exponential-backoff-multiplier: 2
+        retry-exceptions:
+          - com.finpulse.stock.exception.ExternalApiException
+        ignore-exceptions:
+          - com.finpulse.stock.exception.StockNotFoundException
+          - io.github.resilience4j.circuitbreaker.CallNotPermittedException
+  timelimiter:
+    instances:
+      external-apis:
+        timeout-duration: 3s
+  bulkhead:
+    instances:
+      external-apis:
+        max-concurrent-calls: 20
+        max-wait-duration: 100ms
+  ratelimiter:
+    instances:
+      external-apis:
+        limit-for-period: 100
+        limit-refresh-period: 1s
+        timeout-duration: 0ms
+
 logging:
   level:
     root: WARN

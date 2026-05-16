@@ -5,6 +5,9 @@ import com.finpulse.stock.dto.CompanyInfoResponse;
 import com.finpulse.stock.dto.StockQuoteResponse;
 import com.finpulse.stock.exception.ExternalApiException;
 import com.finpulse.stock.exception.StockNotFoundException;
+import io.github.resilience4j.bulkhead.annotation.Bulkhead;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,6 +47,9 @@ public class AlphaVantageProvider implements StockProvider {
     }
 
     @Override
+    @CircuitBreaker(name = "alpha-vantage", fallbackMethod = "fallbackGetQuote")
+    @Retry(name = "alpha-vantage")
+    @Bulkhead(name = "external-apis")
     public StockQuoteResponse getQuote(String symbol) {
         log.info("[Alpha Vantage] Buscando cotação: {}", symbol);
         try {
@@ -89,6 +95,9 @@ public class AlphaVantageProvider implements StockProvider {
     }
 
     @Override
+    @CircuitBreaker(name = "alpha-vantage", fallbackMethod = "fallbackGetCompanyInfo")
+    @Retry(name = "alpha-vantage")
+    @Bulkhead(name = "external-apis")
     public CompanyInfoResponse getCompanyInfo(String symbol) {
         log.info("[Alpha Vantage] Buscando dados da empresa: {}", symbol);
         try {
@@ -114,6 +123,22 @@ public class AlphaVantageProvider implements StockProvider {
             throw new ExternalApiException(PROVIDER_NAME,
                     "Falha HTTP " + e.getStatusCode(), e);
         }
+    }
+
+    // ============================================================
+    // Fallbacks do Circuit Breaker
+    // ============================================================
+
+    private StockQuoteResponse fallbackGetQuote(String symbol, Exception ex) {
+        if (ex instanceof StockNotFoundException sne) throw sne;
+        log.warn("[Alpha Vantage] Circuit Breaker ativo para cotação de {}: {}", symbol, ex.getMessage());
+        throw new ExternalApiException(PROVIDER_NAME, "Provider temporariamente indisponível: " + ex.getMessage());
+    }
+
+    private CompanyInfoResponse fallbackGetCompanyInfo(String symbol, Exception ex) {
+        if (ex instanceof StockNotFoundException sne) throw sne;
+        log.warn("[Alpha Vantage] Circuit Breaker ativo para empresa {}: {}", symbol, ex.getMessage());
+        throw new ExternalApiException(PROVIDER_NAME, "Provider temporariamente indisponível: " + ex.getMessage());
     }
 
     // ============================================================

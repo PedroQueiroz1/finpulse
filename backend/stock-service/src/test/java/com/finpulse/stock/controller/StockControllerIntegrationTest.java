@@ -2,6 +2,7 @@ package com.finpulse.stock.controller;
 
 import com.finpulse.stock.AbstractIntegrationTest;
 import com.finpulse.stock.helper.StockApiStubs;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -20,12 +21,17 @@ class StockControllerIntegrationTest extends AbstractIntegrationTest {
     @Autowired
     private CacheManager cacheManager;
 
+    @Autowired
+    private CircuitBreakerRegistry cbRegistry;
+
     private StockApiStubs stubs;
 
     @BeforeEach
     void setUp() {
         stubs = new StockApiStubs(wireMock);
         stubs.reset();
+        cbRegistry.circuitBreaker("alpha-vantage").reset();
+        cbRegistry.circuitBreaker("finnhub").reset();
         cacheManager.getCacheNames().forEach(name -> {
             var cache = cacheManager.getCache(name);
             if (cache != null) cache.clear();
