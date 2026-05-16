@@ -131,7 +131,8 @@ public class AuthService {
     private AuthResponse generateAuthResponse(User user) {
         Map<String, Object> claims = Map.of(
                 "role", user.getRole().name(),
-                "name", user.getName()
+                "name", user.getName(),
+                "userId", user.getId().toString()
         );
 
         String accessToken = jwtService.generateAccessToken(user.getEmail(), claims);

@@ -1,0 +1,16 @@
+# ================================
+# api-gateway - Perfil DEV
+# ================================
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+jwt:
+  secret: finpulse-secret-key-que-deve-ter-pelo-menos-256-bits-de-comprimento-para-seguranca
+
+logging:
+  level:
+    com.finpulse.gateway: DEBUG
+    org.springframework.cloud.gateway: DEBUG
+    reactor.netty.http.client: DEBUG

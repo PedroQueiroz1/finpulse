@@ -1,0 +1,36 @@
+# ================================
+# api-gateway - Perfil PROD
+# ================================
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL:http://eureka-server:8761/eureka/}
+
+jwt:
+  secret: ${JWT_SECRET}
+
+spring:
+  cloud:
+    gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOriginPatterns:
+              - ${CORS_ALLOWED_ORIGIN:https://finpulse.com}
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders:
+              - Authorization
+              - Content-Type
+              - X-Correlation-ID
+            exposedHeaders:
+              - X-Correlation-ID
+
+logging:
+  level:
+    com.finpulse.gateway: INFO
+    root: WARN

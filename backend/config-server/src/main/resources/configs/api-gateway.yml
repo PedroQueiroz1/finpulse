@@ -1,0 +1,80 @@
+# ================================
+# api-gateway - Configuração Base
+# ================================
+server:
+  port: 8080
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/auth/**
+
+        - id: notes-service
+          uri: lb://notes-service
+          predicates:
+            - Path=/api/notes/**
+          filters:
+            - name: JwtAuth
+
+        - id: stock-service
+          uri: lb://stock-service
+          predicates:
+            - Path=/api/stocks/**
+          filters:
+            - name: JwtAuth
+            - name: CircuitBreaker
+              args:
+                name: stockCircuit
+                fallbackUri: forward:/fallback/stock
+
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOriginPatterns: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+            exposedHeaders:
+              - X-Correlation-ID
+
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+
+  resilience4j:
+    circuitbreaker:
+      instances:
+        stockCircuit:
+          registerHealthIndicator: true
+          slidingWindowSize: 10
+          failureRateThreshold: 50
+          waitDurationInOpenState: 30s
+          permittedNumberOfCallsInHalfOpenState: 3
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,gateway
+  endpoint:
+    health:
+      show-details: always
+    gateway:
+      enabled: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
+info:
+  app:
+    name: api-gateway
+    description: FinPulse API Gateway
+    version: 1.0.0

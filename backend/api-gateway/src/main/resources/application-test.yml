@@ -1,0 +1,69 @@
+spring:
+  application:
+    name: api-gateway
+  config:
+    import: ""
+  cloud:
+    config:
+      enabled: false
+    gateway:
+      routes:
+        - id: auth-service
+          uri: http://localhost:${wiremock.port:0}
+          predicates:
+            - Path=/api/auth/**
+
+        - id: notes-service
+          uri: http://localhost:${wiremock.port:0}
+          predicates:
+            - Path=/api/notes/**
+          filters:
+            - name: JwtAuth
+
+        - id: stock-service
+          uri: http://localhost:${wiremock.port:0}
+          predicates:
+            - Path=/api/stocks/**
+          filters:
+            - name: JwtAuth
+            - name: CircuitBreaker
+              args:
+                name: stockCircuit
+                fallbackUri: forward:/fallback/stock
+
+      # Disable connection pooling — avoids PrematureCloseException with WireMock + Reactor Netty
+      httpclient:
+        pool:
+          type: DISABLED
+
+eureka:
+  client:
+    enabled: false
+
+jwt:
+  secret: test-secret-key-for-gateway-testing-needs-at-least-256-bits-of-total-length
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      stockCircuit:
+        registerHealthIndicator: false
+        slidingWindowSize: 3
+        failureRateThreshold: 100
+        waitDurationInOpenState: 2s
+        permittedNumberOfCallsInHalfOpenState: 1
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+    gateway:
+      enabled: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
